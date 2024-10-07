@@ -1,6 +1,35 @@
 import os
 import sys
+from aminos import Aminos
 
+
+def to_amino_acids(dna, genes):
+
+    amino_acids = []
+    amino_arr = []
+    for gene in genes:
+        for i in range(gene[0], gene[1] + 3, 3):
+            amino_arr.append(Aminos[dna[i:i+3]])
+    amino_acids = ''.join(amino_arr)
+    return amino_acids
+
+def count_codon_frequency(amino_acids):
+    freq = {}
+    for amino in amino_acids:
+        if freq.get(amino) == None:
+            freq[amino] = 1
+        else:
+            freq[amino] = freq[amino] + 1
+    return freq 
+
+def count_dicodon_frequency(amino_acids):
+    freq = {}
+    for i in range(0, len(amino_acids), 2):
+        if freq.get(amino_acids[i:i+2]) == None:
+            freq[amino_acids[i:i+2]] = 1
+        else:
+            freq[amino_acids[i:i+2]] = freq[amino_acids[i:i+2]] + 1
+    return freq
 
 def find_stop_start(path):
     file_name = os.path.basename(path).split('/')[-1].split('.')[-2]
@@ -42,7 +71,12 @@ def find_stop_start(path):
             i += 3
         else:
             i += 1
-    print(genes)
+
+    genes = [i for i in genes if (i[1] - i[0]) > 100]
+    return genes
+
+
+
     
     
    
@@ -50,7 +84,7 @@ def find_stop_start(path):
 path = sys.argv[1]
 
 find_stop_start(path)
-
+print(count_dicodon_frequency("ABCDEFGGGAADA"))
 
 
 
