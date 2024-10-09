@@ -15,20 +15,32 @@ def to_amino_acids(dna, genes):
 
 def count_codon_frequency(amino_acids):
     freq = {}
+    length = len(amino_acids)
     for amino in amino_acids:
         if freq.get(amino) == None:
             freq[amino] = 1
         else:
             freq[amino] = freq[amino] + 1
+
+    for thing in freq:
+        freq[thing] = '%.5f'%(freq[thing]/length)
+    
     return freq 
 
 def count_dicodon_frequency(amino_acids):
     freq = {}
+    length = len(amino_acids)
     for i in range(0, len(amino_acids), 2):
         if freq.get(amino_acids[i:i+2]) == None:
+            if len(amino_acids[i:i+2]) == 1:
+                continue
             freq[amino_acids[i:i+2]] = 1
         else:
             freq[amino_acids[i:i+2]] = freq[amino_acids[i:i+2]] + 1
+
+    for thing in freq:
+        freq[thing] = '%.5f'%(freq[thing]/length)
+    
     return freq
 
 def find_stop_start(path):
