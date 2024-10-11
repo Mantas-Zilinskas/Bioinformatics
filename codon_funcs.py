@@ -88,14 +88,3 @@ def find_stop_start(path):
 
 
 
-    
-    
-   
-    
-path = sys.argv[1]
-
-find_stop_start(path)
-print(count_dicodon_frequency("ABCDEFGGGAADA"))
-
-
-
