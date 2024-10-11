@@ -4,7 +4,6 @@ from aminos import Aminos
 
 
 def to_amino_acids(dna, genes):
-
     amino_acids = []
     amino_arr = []
     for gene in genes:
