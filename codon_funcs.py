@@ -3,17 +3,74 @@ import sys
 from aminos import Aminos
 
 
+def evaluate_distance(open_frame1, open_frame2, tolerance = 0):
+    primary = None
+    secondary = None
+
+    matches = 0
+
+    if len(open_frame1) < len(open_frame2):
+        primary = open_frame1
+        secondary = open_frame2
+    else:
+        secondary = open_frame1
+        primary = open_frame2
+
+    i = 0
+    j = 0
+    skips = 0
+    while(len(primary) > i and len(secondary) > j):
+        # print(f"{i}  {j}  {matches}")
+        if(skips > 0):
+            flag = False
+            for l in range(skips):
+                if(primary[i] == secondary[j - (l + 1)]):
+                    matches += 1
+                    i += 1
+                    j -= l
+                    flag = True
+                    skips = 0
+                    break
+            if flag: 
+                continue
+
+        if(primary[i] == secondary[j]):
+            matches += 1
+            i += 1
+            j += 1
+            continue
+        else:
+            for l in range(tolerance):
+                if len(secondary) == (j + l + 1):
+                    skips += 1 
+                    break
+                if primary[i] == secondary[j + (l + 1)]:
+                    matches += 1
+                    j += (l + 1)
+                    break
+                if l + 1 == tolerance and skips < tolerance:
+                    skips += 1 
+        
+        i += 1
+        j += 1 
+           
+    return 1 - matches / len(primary)
+               
+           
+
 def to_amino_acids(dna, genes):
     amino_acids = []
     amino_arr = []
     for gene in genes:
         for i in range(gene[0], gene[1] + 3, 3):
             amino_arr.append(Aminos[dna[i:i+3]])
+            
     amino_acids = ''.join(amino_arr)
     return amino_acids
 
 def count_codon_frequency(amino_acids):
     freq = {}
+    amino_acids = "".join(amino_acids.split("*"))
     length = len(amino_acids)
     for amino in amino_acids:
         if freq.get(amino) == None:
@@ -21,8 +78,8 @@ def count_codon_frequency(amino_acids):
         else:
             freq[amino] = freq[amino] + 1
 
-    for thing in freq:
-        freq[thing] = '%.5f'%(freq[thing]/length)
+    for key in freq:
+        freq[key] = '%.5f'%(freq[key]/length)
     
     return freq 
 
@@ -42,14 +99,7 @@ def count_dicodon_frequency(amino_acids):
     
     return freq
 
-def find_stop_start(path):
-    file_name = os.path.basename(path).split('/')[-1].split('.')[-2]
-
-    file = open(path, "r")
-    name = file.readline()
-    content = file.read()
-    content = ''.join(content.split('\n'))
-
+def find_stop_start(content):
 
     flag = False
     genes = []
