@@ -1,6 +1,7 @@
 import os
 import sys
-from aminos import Aminos
+import math
+from aminos import Aminos, Aminos_C
 
 
 def evaluate_distance(open_frame1, open_frame2, tolerance = 0):
@@ -55,7 +56,23 @@ def evaluate_distance(open_frame1, open_frame2, tolerance = 0):
         j += 1 
            
     return 1 - matches / len(primary)
-               
+
+def cosine_similarity(dict1:dict, dict2:dict):
+        
+    acc1 = 0
+    acc2 = 0
+    acc3 = 0
+
+    for val1 in dict1:
+        acc1 += (dict1.get(val1) * dict2.get(val1))
+
+    for val1 in dict1:
+        acc2 += (dict1.get(val1))**2
+
+    for val2 in dict2:
+        acc3 += (dict2.get(val2))**2
+    
+    return '%.5f'%(abs(1-(acc1/(math.sqrt(acc2)*math.sqrt(acc3)))))
            
 
 def to_amino_acids(dna, genes):
@@ -68,34 +85,36 @@ def to_amino_acids(dna, genes):
     amino_acids = ''.join(amino_arr)
     return amino_acids
 
-def count_codon_frequency(amino_acids):
-    freq = {}
-    amino_acids = "".join(amino_acids.split("*"))
+def count_codon_frequency(frames):
+    freq = Aminos_C()
+    amino_acids = "".join(frames.split("*"))
     length = len(amino_acids)
     for amino in amino_acids:
-        if freq.get(amino) == None:
-            freq[amino] = 1
-        else:
-            freq[amino] = freq[amino] + 1
+            freq.Aminos[amino] += 1
 
-    for key in freq:
-        freq[key] = '%.5f'%(freq[key]/length)
+    for key in freq.Aminos:
+        freq.Aminos[key] = freq.Aminos[key]/length
     
-    return freq 
+    return freq.Aminos
 
-def count_dicodon_frequency(amino_acids):
-    freq = {}
+def count_dicodon_frequency(frames):
+    freq={}
+    amino_acids = "".join(frames.split("*"))
+    acids = Aminos_C()
+    keys = acids.Aminos.keys()
+
+    for i in keys:
+        for j in keys:
+            freq[i + j] = 0
+
+
     length = len(amino_acids)
     for i in range(0, len(amino_acids), 2):
-        if freq.get(amino_acids[i:i+2]) == None:
-            if len(amino_acids[i:i+2]) == 1:
-                continue
-            freq[amino_acids[i:i+2]] = 1
-        else:
+        if len(amino_acids[i:i+2]) == 2:
             freq[amino_acids[i:i+2]] = freq[amino_acids[i:i+2]] + 1
 
     for thing in freq:
-        freq[thing] = '%.5f'%(freq[thing]/length)
+        freq[thing] = freq[thing]/length
     
     return freq
 
